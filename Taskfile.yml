@@ -1,0 +1,23 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  CONTRACT_NAME: tourney
+
+tasks:
+  default:
+    dir: scripts/
+    cmds:
+      - sh ./check-tools.sh
+  clean:
+    desc: remove the ./build folder
+    cmds:
+      - rm -rf ./build
+
+  contract.build:
+    desc: Build smart contract '{{.CONTRACT_NAME}}.sol'
+    cmds:
+      - solc --optimize --overwrite --abi ./contracts/{{.CONTRACT_NAME}}.sol -o build
+      - solc --optimize --overwrite --bin ./contracts/{{.CONTRACT_NAME}}.sol -o build
+      - abigen --abi=./build/{{.CONTRACT_NAME}}.abi --bin=./build/{{.CONTRACT_NAME}}.bin --pkg=api --out=internal/api/{{.CONTRACT_NAME}}.go
